@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--引入properties配置文件-->
+    <properties resource="jdbc.properties"></properties>
+
+
+
+    <settings>
+        <!-- 设置驼峰匹配:从数据库列名映射java属性名称的经典方式 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+
+    <!-- 配置别名 -->
+    <typeAliases>
+        <!-- typeAlias:用来配置别名，方便映射文件使用，type:类的全限定类名,alias:别名 单个类配置 -->
+       <!-- <typeAlias type="com.jing.pojo.User" alias="User"/>-->
+
+        <!-- package:用来配置全局别名，方便映射文件使用 配置整个包-->
+        <package name="com.jing.pojo"></package>
+    </typeAliases>
+
+
+
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driverClass}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+
+        <!--配置多个数据库环境-->
+        <environment id="development2">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/jdbctest2"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+
+    </environments>
+
+    <!-- 配置映射文件：用来配置sql语句和结果集类型等 -->
+    <mappers>
+        <mapper resource="UserDaoMapper.xml"/>
+        <mapper resource="UserMapper.xml"/>
+    </mappers>
+</configuration>

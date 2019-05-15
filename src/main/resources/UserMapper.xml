@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--使用Mapper代理命名空间必须写Mapper接口全路径-->
+<mapper namespace="com.jing.mapper.UserMapper">
+
+
+    <!--查询语句   如果参数是${} 而不是#{} 则接口参数需要加 @Param("id") 修饰-->
+    <select id="queryUserById" resultType="User">
+        select *  from tb_user where id = ${id}
+    </select>
+
+    
+    <resultMap id="userResultMap" type="User" autoMapping="true">
+        <!--配置主键映射关系-->
+        <id column="id" property="id"></id>
+        <!--配置用户名的映射关系(数据库字段和实体类字段对应)-->
+        <result column="user_name" property="userName"></result>
+    </resultMap>
+    
+    <!--<select id="queryUserList" resultType="User">-->
+
+    <!--resultMap对应上面resultMap标签的id -->
+    <select id="queryUserList" resultMap="userResultMap">
+        select * from tb_user
+    </select>
+
+
+    <!--
+      insert：编写插入语句
+      id:插入语句的唯一标识
+      parameterType：插入语句的参数类型，可以省略。
+      useGeneratedKeys：开启主键自增回显，将自增长的主键值回显到形参中（即封装到User对象中）
+      keyColumn：数据库中主键的字段名称
+      keyProperty：pojo中主键对应的属性
+     -->
+    <insert id="insertUser" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into tb_user(
+          user_name,
+          password,
+          name,
+          age,
+          sex,
+          birthday,
+          created,
+          updated
+        )values(
+          #{userName},
+          #{password},
+          #{name},
+          #{age},
+          #{sex},
+          #{birthday},
+          now(),
+          now()
+        )
+    </insert>
+
+    <!--修改语句-->
+    <update id="updateUser">
+        UPDATE tb_user
+        SET user_name = #{userName},
+        password = #{password},
+        name = #{name},
+        age = #{age},
+        sex = #{sex},
+        birthday = #{birthday},
+        updated = now()
+        WHERE
+         (id = #{id})
+    </update>
+
+    <!--删除语句-->
+    <delete id="deleteUserById">
+        delete from tb_user where id=#{id}
+    </delete>
+
+
+    <!--动态sql 使用OGNL表达式-->
+
+    <!--查询男性用户，如果输入了用户名，按用户名模糊查询,如果没有输入用户名，就查询所有男性用户。-->
+
+
+</mapper>
