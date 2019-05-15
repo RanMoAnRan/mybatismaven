@@ -1,7 +1,6 @@
 package com.jing.mapper;
 
 import com.jing.pojo.Order;
-import com.jing.pojo.User;
 import com.jing.utils.DBUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Before;
@@ -41,7 +40,5 @@ public class OrderMapperTest {
         System.out.println(order.getId()+"--------------"+order.getOrderNumber());
         System.out.println(order.getUser());
     }
-
-
 
 }
