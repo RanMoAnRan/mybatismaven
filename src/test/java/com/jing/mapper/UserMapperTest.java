@@ -62,4 +62,48 @@ public class UserMapperTest {
     public void deleteUserById() {
         userMapper.deleteUserById(7l);
     }
+
+    @Test
+    public void queryUsersLikeUserName() {
+        List<User> userList = userMapper.queryUsersLikeUserName("zhang");
+        for (User user : userList) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void queryUserListByUserNameOrAge() {
+        List<User> users = userMapper.queryUserListByUserNameOrAge("lei", 16);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void queryUserListByUserNameAndAge() {
+        List<User> users = userMapper.queryUserListByUserNameAndAge("si", null);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void updateUserSelective() {
+        User user = new User();
+        user.setUserName("jingge");
+        user.setPassword("123456");
+        user.setName("靖哥");
+        user.setAge(20);
+        user.setId(23l);
+        userMapper.updateUserSelective(user);
+    }
+
+    @Test
+    public void queryUserListByIds() {
+        Long[] ids ={1l,5l,6l};
+        List<User> users = userMapper.queryUserListByIds(ids);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
 }

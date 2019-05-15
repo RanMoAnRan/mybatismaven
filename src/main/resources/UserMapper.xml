@@ -13,14 +13,14 @@
         select *  from tb_user where id = ${id}
     </select>
 
-    
+
     <resultMap id="userResultMap" type="User" autoMapping="true">
         <!--配置主键映射关系-->
         <id column="id" property="id"></id>
         <!--配置用户名的映射关系(数据库字段和实体类字段对应)-->
         <result column="user_name" property="userName"></result>
     </resultMap>
-    
+
     <!--<select id="queryUserList" resultType="User">-->
 
     <!--resultMap对应上面resultMap标签的id -->
@@ -82,6 +82,76 @@
     <!--动态sql 使用OGNL表达式-->
 
     <!--查询男性用户，如果输入了用户名，按用户名模糊查询,如果没有输入用户名，就查询所有男性用户。-->
+    <select id="queryUsersLikeUserName" resultType="User">
+        select * from tb_user where sex=1
+        <if test="userName!=null and userName.trim()!=''">
+            and user_name like '%' #{userName} '%'
+        </if>
+    </select>
+
+    <!--根据用户名或者年龄查询所有男性用户，如果输入了用户名则按照用户名模糊查找，
+    否则就按照年龄查找，两个条件只能成立一个，如果都不输入就查找用户名为“zhangsan”的男性用户-->
+    <select id="queryUserListByUserNameOrAge" resultType="User">
+        select * from tb_user where sex=1
+        <choose>
+            <when test="userName!=null and userName.trim()!=''">
+                and user_name like '%' #{userName} '%'
+            </when>
+            <when test="age!=null">
+                and age=#{age}
+            </when>
+            <otherwise>
+                and user_name="zhangsan"
+            </otherwise>
+        </choose>
+    </select>
 
 
+    <!--查询所有用户，如果输入了用户名按照用户名进行模糊查询，
+    如果输入年龄，按年龄进行查询，如果两者都输入，两个条件都要成立。
+    where标签：可以自动将动态sql中多出来的一个and或者or去除。
+    -->
+    <select id="queryUserListByUserNameAndAge" resultType="User">
+        select * from tb_user
+        <where>
+            <if test="userName!=null and userName.trim()!=''">
+                user_name like '%' #{userName} '%'
+            </if>
+            <if test="age!=null">
+                and age=#{age}
+            </if>
+        </where>
+    </select>
+
+
+    <!--set标签：可以自动添加一个set关键字，并且会将动态sql最后多余的逗号去除。-->
+
+    <!--修改用户信息，如果参数user中的某个属性为null，则不修改。-->
+    <update id="updateUserSelective" parameterType="User">
+        update tb_user
+        <set>
+            <if test="userName!=null and userName.trim()!=''">
+                user_name=#{userName},
+            </if>
+            <if test="password!=null and password.trim!=''">
+                password=#{password},
+            </if>
+            <if test="name!=null and name.trim()!=''">
+                name=#{name},
+            </if>
+            <if test="age!=null">
+                age=#{age}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <!--按照多个id查询用户信息-->
+    <select id="queryUserListByIds" resultType="User">
+        select * from tb_user where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>
