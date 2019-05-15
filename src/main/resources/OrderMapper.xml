@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.jing.mapper.OrderMapper">
+
+    <!--一对一查询-->
+    <!--通过订单编号20140921003查询出订单信息，并查询出下单人信息。-->
+    <!--start-->
+    <select id="queryOrderAndUserByOrderNumber" resultMap="orderAndUserResultMap">
+        select * ,user.id as uid from tb_order o inner join  tb_user user on o.user_id=user.id
+         where o.order_number= #{orderNumber}
+    </select>
+    <!--
+          配置自定义结果集
+          id属性：自定义结果集的唯一标识
+          type属性：结果集类型
+          autoMapping属性：多表查询时，必须设置为true，Order对象和tb_order表的属性和字段才会进行自动映射
+       -->
+    <resultMap id="orderAndUserResultMap" type="Order" autoMapping="true">
+        <!--配置Order的主键映射-->
+        <id column="id" property="id"></id>
+        <!--
+         association标签：用于对一的映射
+         property属性：类中的关联属性的名称
+         javaType属性：属性对应的类型
+         autoMapping属性:autoMapping属性：多表查询时，必须设置为true，User对象和tb_user表的属性和字段才会进行自动映射
+       -->
+        <association property="user" javaType="User" autoMapping="true">
+            <id column="uid" property="id"></id>
+        </association>
+    </resultMap>
+    <!--end-->
+
+
+    <!--一对多查询-->
+    <!--通过订单编号20140921001查询订单，并查询出下单人信息以及查询出订单详情。-->
+    <!--start-->
+    <select id="queryOrderAndUserAndOrderdetailByOrderNumber" resultMap="orderAndUserAndOrderdetailsResultMap">
+        select * ,user.id as uid , od.id as detail_id
+        from tb_order o inner join tb_user user on o.user_id=user.id
+        inner join tb_orderdetail od on od.order_id=o.id
+        where o.order_number= #{orderNumber}
+    </select>
+
+    <resultMap id="orderAndUserAndOrderdetailsResultMap" type="Order" autoMapping="true">
+        <id column="id" property="id"></id>
+        <!--一对一-->
+        <association property="user" javaType="User" autoMapping="true">
+            <id column="uid" property="id"></id>
+        </association>
+        <!--一对多-->
+        <collection property="orderdetails" javaType="List" ofType="Orderdetail" autoMapping="true">
+            <id column="detail_id" property="id"></id>
+        </collection>
+    </resultMap>
+    <!--end-->
+
+
+    <!--多对多查询-->
+    <!--start-->
+    <select id="queryOrderAndUserAndOrderdetailAndItemByOrderNumber"
+            resultMap="orderAndUserAndOrderdetailsAndItemResultMap">
+       SELECT
+          *,u.id as uid,od.id as detail_id,i.id as iid
+       FROM tb_order o
+       INNER JOIN tb_user u ON o.user_id = u.id
+       INNER JOIN tb_orderdetail od on od.order_id = o.id
+       INNER JOIN tb_item i on i.id = od.item_id
+       WHERE
+          o.order_number = #{orderNumber}
+    </select>
+
+    <resultMap id="orderAndUserAndOrderdetailsAndItemResultMap" type="Order" autoMapping="true">
+        <id column="id" property="id"></id>
+        <!--一对一-->
+        <association property="user" javaType="User" autoMapping="true">
+            <id column="uid" property="id"></id>
+        </association>
+        <!--一对多-->
+        <collection property="orderdetails" javaType="List" ofType="Orderdetail" autoMapping="true">
+            <id column="detail_id" property="id"></id>
+            <!--订单详情和商品的一对一的关系-->
+            <association property="item" javaType="Item" autoMapping="true">
+                <id column="iid" property="id"></id>
+            </association>
+        </collection>
+    </resultMap>
+    <!--end-->
+
+
+    <!--延迟加载需求：通过订单编号20140921001查询order并延迟加载user-->
+    <!--通过订单编号查询订单-->
+    <!--start-->
+    <select id="queryOrderUserLazy" resultMap="orderUserLazyResultMap">
+        select * from tb_order where order_number = #{orderNumber}
+    </select>
+
+    <select id="queryUserByIdOfOrder" resultType="User">
+        select * from tb_user where id = #{id}
+    </select>
+
+    <resultMap id="orderUserLazyResultMap" type="Order">
+        <!--
+      select属性：调用指定sql语句来执行延迟加载
+      column属性：延迟加载的sql语句中所需的参数
+        -->
+        <association property="user" javaType="User" select="queryUserByIdOfOrder" column="{id=user_id}"></association>
+    </resultMap>
+    <!--end-->
+
+</mapper>

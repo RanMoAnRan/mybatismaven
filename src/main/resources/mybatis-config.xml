@@ -12,6 +12,9 @@
     <settings>
         <!-- 设置驼峰匹配:从数据库列名映射java属性名称的经典方式 -->
         <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <!--配置自动映射-->
+        <!--<setting name="autoMappingBehavior" value="FULL"/>-->
     </settings>
 
 
@@ -55,5 +58,6 @@
     <mappers>
         <mapper resource="UserDaoMapper.xml"/>
         <mapper resource="UserMapper.xml"/>
+        <mapper resource="OrderMapper.xml"/>
     </mappers>
 </configuration>

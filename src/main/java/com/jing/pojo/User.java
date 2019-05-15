@@ -2,6 +2,11 @@ package com.jing.pojo;
 
 import java.util.Date;
 
+/**
+ * @Description //TODO 用户表
+ * @Date 18:31 2019/5/15
+ *
+ **/
 public class User {
 
     private Long id;
